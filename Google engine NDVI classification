@@ -1,0 +1,29 @@
+
+var imagenlandsat = ee.ImageCollection("LANDSAT/LC08/C01/T1_SR")
+var l_8 = ee.ImageCollection("LANDSAT/LC08/C01/T1_SR").filterBounds(geometry2);
+Map.centerObject(geometry2);
+var l_8 = ee.ImageCollection("LANDSAT/LC08/C01/T1_SR").filterBounds(geometry2).filterDate('2018-01-01', '2018-12-01');
+var addNDVI = function(image) {
+  var ndvi = image.normalizedDifference(['B8', 'B4']).rename('NDVI');
+  return image.addBands(ndvi);
+};
+var l8_NDVI = l_8.map(addNDVI);
+var recent_S2 = ee.Image(S2_NDVI.sort('system:time_start', false).first());
+
+------------------------------------------------------------------------
+var imagenlandsat = ee.ImageCollection("LANDSAT/LC08/C01/T1_SR")
+var ColeccionLandsat = ee.ImageCollection("LANDSAT/LC08/C01/T1_SR");
+   .filterBounds (geometry2)
+   .filterDate ('2020-08-01' ,'2020-08-30')
+   .filterMetadata ('CLOUDY_PIXEL_PERCENTAGE', 'Less_Than', 10);
+var ZonaAOI = ColeccionLandsat.first();
+var NDVI = ZonaAOI.normalizedDifference (['B8', 'B4']);
+var SimbologiaNDVI  = {min:0, max: 1, opacity: 1,
+    palette: ['#0000ff','F1B555','99B718','66A000','3E8601','056201','023B01','011D01']};
+Map.addLayer (ZonaAOI, {
+   max: 6500.0, 
+   min: 0.0, 
+   gamma: 1.0, 
+   bands: ['B8', 'B4', 'B3']},
+   'Filtro NIR para vegetacion');
+Map.addLayer (NDVI, SimbologiaNDVI, 'Índice NDVI');
